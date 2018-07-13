@@ -26,6 +26,10 @@ class CustomFech {
   getStatus() {
     return this.status;
   }
+
+  finish() {
+    this.status.postCount = 0;
+  }
 }
 
 module.exports = CustomFech;

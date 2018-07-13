@@ -4,8 +4,10 @@ const respond = require('koa-respond');
 const sharp = require('sharp');
 const md5 = require('md5');
 
+const { PENDING, INPROGRSS } = require('./constants');
+
 let CustomFech = require('./customFech');
-let customFech;
+let customFech = CustomFech.build();
 
 const app = new Koa();
 
@@ -13,14 +15,15 @@ app.use(respond());
 
 let router = new Router();
 
-const reg_post = require('./reg_post');
+const reg_post1 = require('./reg_post1');
+const reg_post2 = require('./reg_post2');
 
 const reg_image = {};
 
 let finished = null;
 let duration = null;
 let imageUpdated = 0;
-let status = 'inprogress';
+let status = PENDING;
 
 const resizeImage = async ({ catchRes, customFech, img_url }) => {
   const res = catchRes ? catchRes : await customFech.fetch(img_url);
@@ -42,13 +45,13 @@ const resizeImage = async ({ catchRes, customFech, img_url }) => {
   };
 };
 
-async function main() {
+async function main(posts) {
   customFech = CustomFech.build();
   const start = new Date();
-  status = 'inprogress';
+  status = INPROGRSS;
   let updateCount = 0;
 
-  for (const post of reg_post) {
+  for (const post of posts) {
     const { id, img_url } = post;
 
     if (reg_image[id]) {
@@ -66,13 +69,12 @@ async function main() {
 
   const end = new Date();
 
+  customFech.finish();
   duration = end - start;
   finished = end;
   imageUpdated = updateCount;
-  status = 'pending';
+  status = PENDING;
 }
-
-main().then(() => console.log('reg_image', reg_image));
 
 router.get('/tumbnail/:postid/:filename', async (ctx, next) => {
   const postId = ctx.params.postid;
@@ -86,7 +88,7 @@ router.get('/status', async (ctx, next) => {
   const { imageTotalSize, postCount } = customFech.getStatus();
 
   ctx.ok({
-    imageCount: reg_image.length,
+    imageCount: Object.keys(reg_image).length,
     imageTotalSize,
     previousUpdate: {
       finished,
@@ -98,6 +100,18 @@ router.get('/status', async (ctx, next) => {
       postCount
     }
   });
+});
+
+router.get('/test1', async (ctx, next) => {
+  await main(reg_post1);
+  console.log('reg_image', reg_image);
+  ctx.ok('OK');
+});
+
+router.get('/test2', async (ctx, next) => {
+  await main(reg_post2);
+  console.log('reg_image', reg_image);
+  ctx.ok('OK');
 });
 
 app.use(router.routes()).use(router.allowedMethods());
