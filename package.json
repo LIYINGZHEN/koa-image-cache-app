@@ -1,0 +1,11 @@
+{
+  "name": "koa-image-cache-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Max Li <ml@maxlivinci.com> (https://maxlivinci.com/)",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": ""
+}
