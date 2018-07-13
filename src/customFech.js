@@ -9,18 +9,22 @@ class CustomFech {
   }
 
   constructor() {
-    this.imageTotalSize = 1;
+    this.status = {
+      imageTotalSize: 0,
+      postCount: 0
+    };
   }
 
   async fetch(img_url) {
     const res = await fetch(img_url);
     const contentLength = res.headers.get('content-length');
-    this.imageTotalSize += Number(contentLength);
+    this.status.imageTotalSize += Number(contentLength);
+    this.status.postCount++;
     return res;
   }
 
-  getImageTotalSize() {
-    return this.imageTotalSize;
+  getStatus() {
+    return this.status;
   }
 }
 

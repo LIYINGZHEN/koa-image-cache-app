@@ -21,7 +21,6 @@ let finished = null;
 let duration = null;
 let imageUpdated = 0;
 let status = 'inprogress';
-let postCount = 0;
 
 const resizeImage = async ({ catchRes, customFech, img_url }) => {
   const res = catchRes ? catchRes : await customFech.fetch(img_url);
@@ -47,6 +46,7 @@ async function main() {
   customFech = CustomFech.build();
   const start = new Date();
   status = 'inprogress';
+  let updateCount = 0;
 
   for (const post of reg_post) {
     const { id, img_url } = post;
@@ -56,21 +56,20 @@ async function main() {
       const lastModified = res.headers.get('last-modified');
       if (new Date(lastModified) - new Date(reg_image[id].modified) > 0) {
         reg_image[id] = await resizeImage({ catchRes: res });
+        updateCount++;
       }
     } else {
       reg_image[id] = await resizeImage({ img_url, customFech });
+      updateCount++;
     }
-
-    postCount++;
   }
 
   const end = new Date();
 
   duration = end - start;
   finished = end;
-  imageUpdated = postCount;
+  imageUpdated = updateCount;
   status = 'pending';
-  postCount = 0;
 }
 
 main().then(() => console.log('reg_image', reg_image));
@@ -84,9 +83,11 @@ router.get('/tumbnail/:postid/:filename', async (ctx, next) => {
 });
 
 router.get('/status', async (ctx, next) => {
+  const { imageTotalSize, postCount } = customFech.getStatus();
+
   ctx.ok({
     imageCount: reg_image.length,
-    imageTotalSize: customFech.getImageTotalSize(),
+    imageTotalSize,
     previousUpdate: {
       finished,
       duration,
