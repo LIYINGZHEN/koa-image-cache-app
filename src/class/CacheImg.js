@@ -15,11 +15,11 @@ class CacheImg {
         imageUpdated: 0
       },
       currentUpdate: {
-        status: PENDING,
-        postCount: 0
+        status: PENDING
       }
     };
 
+    this.updateCount = 0;
     this.startTime = null;
     this.endTime = null;
   }
@@ -43,7 +43,7 @@ class CacheImg {
 
   async _resizeAndCount(id, img_url) {
     this.reg_image[id] = await resizeImage(img_url);
-    this.status.currentUpdate.postCount++;
+    this.updateCount++;
   }
 
   _isNewer(timeA, timeB) {
@@ -63,7 +63,7 @@ class CacheImg {
           await this._resizeAndCount(id, img_url);
         }
       } catch (error) {
-        console.error('error at _mainProcess', error)        
+        console.error('error at _mainProcess', error);
       }
     }
   }
@@ -74,17 +74,15 @@ class CacheImg {
     this.status.previousUpdate = {
       finished: this.endTime,
       duration: this.endTime - this.startTime,
-      imageUpdated: this.status.currentUpdate.postCount
+      imageUpdated: this.updateCount
     };
 
-    this._resetCurrentStatus();
+    this._resetStatus();
   }
 
-  _resetCurrentStatus() {
-    this.status.currentUpdate = {
-      status: PENDING,
-      postCount: 0
-    };
+  _resetStatus() {
+    this.status.currentUpdate.status = PENDING;
+    this.updateCount = 0;
   }
 }
 
