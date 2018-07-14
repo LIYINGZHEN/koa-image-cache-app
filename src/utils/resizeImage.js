@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 const sharp = require('sharp');
 const md5 = require('md5');
 
@@ -7,8 +8,8 @@ const md5 = require('md5');
  * @param {object}
  * @returns {object} the required data format
  */
-const resizeImage = async ({ customFech, img_url }) => {
-  const res = await customFech.fetch(img_url);
+const resizeImage = async img_url => {
+  const res = await fetch(img_url);
   const buffer = await res.buffer();
 
   const { data, info } = await sharp(buffer)
