@@ -1,12 +1,10 @@
 const Koa = require('koa');
 const Router = require('koa-router');
 const respond = require('koa-respond');
-const sharp = require('sharp');
-const md5 = require('md5');
 
 const { PENDING, INPROGRSS } = require('./constants');
+const { resizeImage, CustomFech, getImageTotalSize } = require('./utils');
 
-let CustomFech = require('./customFech');
 let customFech = CustomFech.build();
 
 const app = new Koa();
@@ -15,8 +13,8 @@ app.use(respond());
 
 let router = new Router();
 
-const reg_post1 = require('./reg_post1');
-const reg_post2 = require('./reg_post2');
+const reg_post1 = require('./data/reg_post1');
+const reg_post2 = require('./data/reg_post2');
 
 const reg_image = {};
 
@@ -24,26 +22,6 @@ let finished = null;
 let duration = null;
 let imageUpdated = 0;
 let status = PENDING;
-
-const resizeImage = async ({ catchRes, customFech, img_url }) => {
-  const res = catchRes ? catchRes : await customFech.fetch(img_url);
-  const mimeType = res.headers.get('content-type');
-  const modified = res.headers.get('last-modified');
-  const buffer = await res.buffer();
-  const { data, info } = await sharp(buffer)
-    .resize(200)
-    .toBuffer({
-      resolveWithObject: true
-    });
-
-  return {
-    buffer: data,
-    hash: md5(data),
-    fileExt: info.format,
-    modified,
-    mimeType
-  };
-};
 
 async function main(posts) {
   customFech = CustomFech.build();
@@ -85,7 +63,8 @@ router.get('/tumbnail/:postid/:filename', async (ctx, next) => {
 });
 
 router.get('/status', async (ctx, next) => {
-  const { imageTotalSize, postCount } = customFech.getStatus();
+  const { postCount } = customFech.getStatus();
+  const imageTotalSize = getImageTotalSize(reg_image);
 
   ctx.ok({
     imageCount: Object.keys(reg_image).length,
