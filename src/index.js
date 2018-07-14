@@ -12,7 +12,7 @@ app.use(respond());
 
 let router = new Router();
 
-router.get('/tumbnail/:postid/:filename', async (ctx, next) => {
+router.get('/tumbnail/:postid/:filename', async ctx => {
   const postId = ctx.params.postid;
   const image = cacheImg.reg_image[postId];
   if (image) {
@@ -22,18 +22,18 @@ router.get('/tumbnail/:postid/:filename', async (ctx, next) => {
   }
 });
 
-router.get('/status', async (ctx, next) => {
+router.get('/status', async ctx => {
   ctx.ok(cacheImg.getStatus());
 });
 
-router.get('/test1', async (ctx, next) => {
+router.get('/test1', async ctx => {
   const reg_post1 = require('./data/reg_post1');
   await cacheImg.start(reg_post1);
   console.log('reg_image', cacheImg.reg_image);
   ctx.ok('OK');
 });
 
-router.get('/test2', async (ctx, next) => {
+router.get('/test2', async ctx => {
   const reg_post2 = require('./data/reg_post2');
   await cacheImg.start(reg_post2);
   console.log('reg_image', cacheImg.reg_image);
