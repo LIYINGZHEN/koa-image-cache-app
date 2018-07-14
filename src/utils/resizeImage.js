@@ -5,15 +5,15 @@ const md5 = require('md5');
 /**
  * Resize image and return the required data format.
  *
- * @param {object}
- * @returns {object} the required data format
+ * @param {string} img_url the image url
+ * @param {object} options {width, height}
  */
-const resizeImage = async img_url => {
+const resizeImage = async (img_url, options) => {
   const res = await fetch(img_url);
   const buffer = await res.buffer();
 
   const { data, info } = await sharp(buffer)
-    .resize(200)
+    .resize(options.width, options.height)
     .toBuffer({
       resolveWithObject: true
     });

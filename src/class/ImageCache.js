@@ -2,8 +2,11 @@ const { PENDING, INPROGRSS } = require('../constants');
 
 const { resizeImage, getLastModified, getImageTotalSize } = require('../utils');
 
-class CacheImg {
-  constructor() {
+class ImageCache {
+  constructor({ width, height }) {
+    this.imageWidth = width;
+    this.imageHeight = height;
+
     this.reg_image = {};
 
     this.status = {
@@ -42,7 +45,10 @@ class CacheImg {
   }
 
   async _resizeAndCount(id, img_url) {
-    this.reg_image[id] = await resizeImage(img_url);
+    this.reg_image[id] = await resizeImage(img_url, {
+      width: this.imageWidth,
+      height: this.imageHeight
+    });
     this.updateCount++;
   }
 
@@ -86,4 +92,4 @@ class CacheImg {
   }
 }
 
-module.exports = CacheImg;
+module.exports = ImageCache;

@@ -2,9 +2,14 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const respond = require('koa-respond');
 
-const CacheImg = require('./class/CacheImg');
+const ImageCache = require('./class/ImageCache');
 
-const cacheImg = new CacheImg();
+const { IMAGE_WIDTH, IMAGE_HEIGHT } = require('./constants');
+
+const imageCache = new ImageCache({
+  width: IMAGE_WIDTH,
+  height: IMAGE_HEIGHT
+});
 
 const app = new Koa();
 const port = process.env.PORT || 3000;
@@ -15,7 +20,7 @@ let router = new Router();
 
 router.get('/tumbnail/:postid/:filename', async ctx => {
   const postId = ctx.params.postid;
-  const image = cacheImg.reg_image[postId];
+  const image = imageCache.reg_image[postId];
   if (image) {
     ctx.ok(image.buffer).set({ 'last-modified': image.modified });
   } else {
@@ -24,20 +29,20 @@ router.get('/tumbnail/:postid/:filename', async ctx => {
 });
 
 router.get('/status', async ctx => {
-  ctx.ok(cacheImg.getStatus());
+  ctx.ok(imageCache.getStatus());
 });
 
 router.get('/test1', async ctx => {
   const reg_post1 = require('./data/reg_post1');
-  await cacheImg.start(reg_post1);
-  console.log('reg_image', cacheImg.reg_image);
+  await imageCache.start(reg_post1);
+  console.log('reg_image', imageCache.reg_image);
   ctx.ok('OK');
 });
 
 router.get('/test2', async ctx => {
   const reg_post2 = require('./data/reg_post2');
-  await cacheImg.start(reg_post2);
-  console.log('reg_image', cacheImg.reg_image);
+  await imageCache.start(reg_post2);
+  console.log('reg_image', imageCache.reg_image);
   ctx.ok('OK');
 });
 
