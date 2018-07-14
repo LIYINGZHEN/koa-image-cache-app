@@ -3,7 +3,12 @@ const Router = require('koa-router');
 const respond = require('koa-respond');
 
 const { PENDING, INPROGRSS } = require('./constants');
-const { resizeImage, CustomFech, getImageTotalSize } = require('./utils');
+const {
+  resizeImage,
+  CustomFech,
+  getImageTotalSize,
+  getLastModified
+} = require('./utils');
 
 let customFech = CustomFech.build();
 
@@ -33,10 +38,9 @@ async function main(posts) {
     const { id, img_url } = post;
 
     if (reg_image[id]) {
-      const res = await customFech.fetch(img_url);
-      const lastModified = res.headers.get('last-modified');
+      const lastModified = await getLastModified(img_url);
       if (new Date(lastModified) - new Date(reg_image[id].modified) > 0) {
-        reg_image[id] = await resizeImage({ catchRes: res });
+        reg_image[id] = await resizeImage({ img_url, customFech });
         updateCount++;
       }
     } else {
@@ -56,9 +60,7 @@ async function main(posts) {
 
 router.get('/tumbnail/:postid/:filename', async (ctx, next) => {
   const postId = ctx.params.postid;
-
   const image = reg_image[postId];
-
   ctx.ok(image.buffer).set({ 'last-modified': image.modified });
 });
 

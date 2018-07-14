@@ -11,11 +11,14 @@
   },
   "description": "",
   "dependencies": {
+    "install": "^0.12.1",
     "koa": "^2.5.2",
     "koa-respond": "^1.0.1",
     "koa-router": "^7.4.0",
     "md5": "^2.2.1",
     "node-fetch": "^2.1.2",
+    "npm": "^6.1.0",
+    "request": "^2.87.0",
     "sharp": "^0.20.5"
   },
   "devDependencies": {
