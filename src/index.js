@@ -15,7 +15,11 @@ let router = new Router();
 router.get('/tumbnail/:postid/:filename', async (ctx, next) => {
   const postId = ctx.params.postid;
   const image = cacheImg.reg_image[postId];
-  ctx.ok(image.buffer).set({ 'last-modified': image.modified });
+  if (image) {
+    ctx.ok(image.buffer).set({ 'last-modified': image.modified });
+  } else {
+    ctx.notFound('Image not found'); 
+  }
 });
 
 router.get('/status', async (ctx, next) => {

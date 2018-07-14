@@ -52,14 +52,17 @@ class CacheImg {
   async _mainProcess(posts) {
     for (const post of posts) {
       const { id, img_url } = post;
-
-      if (this.reg_image[id]) {
-        const lastModified = await getLastModified(img_url);
-        if (this._isNewer(lastModified, this.reg_image[id].modified)) {
+      try {
+        if (this.reg_image[id]) {
+          const lastModified = await getLastModified(img_url);
+          if (this._isNewer(lastModified, this.reg_image[id].modified)) {
+            await this._resizeAndCount(id, img_url);
+          }
+        } else {
           await this._resizeAndCount(id, img_url);
         }
-      } else {
-        await this._resizeAndCount(id, img_url);
+      } catch (error) {
+        console.error('error at _mainProcess', error)        
       }
     }
   }
