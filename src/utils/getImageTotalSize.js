@@ -1,6 +1,6 @@
 /**
- * Get actual image size in cache 
- * 
+ * Get actual image size in cache.
+ *
  * @param {object} reg_image object stores the resize image information
  * @returns {number} actual image size in cache (in memory)
  */
