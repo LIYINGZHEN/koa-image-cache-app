@@ -1,5 +1,11 @@
 const request = require('request');
 
+/**
+ * Get last-modified header
+ * 
+ * @param {string} url the image url
+ * @returns {string} returns the last-modified header
+ */
 const getLastModified = url =>
   new Promise((resolve, reject) =>
     request(url, { method: 'HEAD' }, (err, res, body) => {
