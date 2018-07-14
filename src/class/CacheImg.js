@@ -5,8 +5,6 @@ const { resizeImage, getLastModified, getImageTotalSize } = require('../utils');
 class CacheImg {
   constructor() {
     this.reg_image = {};
-    this.startTime = null;
-    this.endTime = null;
 
     this.status = {
       imageCount: 0,
@@ -21,6 +19,9 @@ class CacheImg {
         postCount: 0
       }
     };
+
+    this.startTime = null;
+    this.endTime = null;
   }
 
   async start(posts) {
