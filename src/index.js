@@ -18,9 +18,6 @@ app.use(respond());
 
 let router = new Router();
 
-const reg_post1 = require('./data/reg_post1');
-const reg_post2 = require('./data/reg_post2');
-
 const reg_image = {};
 
 let finished = null;
@@ -84,12 +81,14 @@ router.get('/status', async (ctx, next) => {
 });
 
 router.get('/test1', async (ctx, next) => {
+  const reg_post1 = require('./data/reg_post1');
   await main(reg_post1);
   console.log('reg_image', reg_image);
   ctx.ok('OK');
 });
 
 router.get('/test2', async (ctx, next) => {
+  const reg_post2 = require('./data/reg_post2');
   await main(reg_post2);
   console.log('reg_image', reg_image);
   ctx.ok('OK');
