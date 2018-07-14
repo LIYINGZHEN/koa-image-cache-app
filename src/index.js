@@ -7,6 +7,7 @@ const CacheImg = require('./class/CacheImg');
 const cacheImg = new CacheImg();
 
 const app = new Koa();
+const port = process.env.PORT || 3000;
 
 app.use(respond());
 
@@ -18,7 +19,7 @@ router.get('/tumbnail/:postid/:filename', async ctx => {
   if (image) {
     ctx.ok(image.buffer).set({ 'last-modified': image.modified });
   } else {
-    ctx.notFound('Image not found'); 
+    ctx.notFound('Image not found');
   }
 });
 
@@ -42,4 +43,7 @@ router.get('/test2', async ctx => {
 
 app.use(router.routes()).use(router.allowedMethods());
 
-app.listen(3000);
+app.listen(port, err => {
+  if (err) throw err;
+  console.log(`> ready on http://localhost:${port}`);
+});

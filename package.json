@@ -6,12 +6,12 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon ./src/index.js",
+    "precommit": "npm run pretty-quick",
     "pretty-quick": "pretty-quick --staged",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "description": "",
   "dependencies": {
-    "install": "^0.12.1",
     "koa": "^2.5.2",
     "koa-respond": "^1.0.1",
     "koa-router": "^7.4.0",
